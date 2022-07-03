@@ -2,7 +2,6 @@ import React,{useState} from "react";
 import styles from "../styles/Home.module.css";
 import Link from "next/link";
 import * as fs from "node:fs";
-import InfiniteScroll from "react-infinite-scroll-component";
 //step:1 collect all the files from blogdata directory;
 //step:2 iterate through them  and display them
 
@@ -18,52 +17,24 @@ const blog = (props) => {
   //     setblogs(parsed)
   //   })
   // },[])
-  const [ blogs,setblogs ] = useState(props.allBlogs);
-  const [ count,setcount ] = useState(2);
-  const fetchData = async() => {
-    // a fake async api call like which sends
-    // 20 more records in 1.5 secs
-
-let d = await fetch(`http://localhost:3000/api/blogs/?count=${count+2}`)
-let data = await d.json()
-    setblogs(data);
-    setcount(count + 2)
-  };
+  // const {blogs} = props;
+  const [blogs,setblogs]=useState(props.blogs)
 
   return (
     <div>
       <main className={styles.allBlogs_display}>
-      <InfiniteScroll
-          dataLength={blogs.length} //This is important field to render the next data
-          next={fetchData}
-          hasMore={props.allCount !== blogs.length}
-          loader={<h4>Loading...</h4>}
-          endMessage={
-            <p style={{ textAlign: "center" }}>
-              <b>Yay! You have seen it all</b>
-            </p>
-          }
-          className={styles.grid}
-        >
-           {blogs.map((blogItem) => {
+        {blogs.map((blogItem) => {
           return (
             <div className={styles.grid} key={blogItem.slug}>
               <div className={styles.card}>
                 <Link href={`/blogpost/${blogItem.slug}`}>
                   <h2>{blogItem.title}</h2>
                 </Link>
-                <p>{blogItem.metadesc.substr(0, 100)}...</p>
-
-                <Link href={`/blogpost/${blogItem.slug}`}>
-                  <button className="btn">Read More</button>
-                </Link>
+                <p>{blogItem.metadesc}...</p>
               </div>
             </div>
           );
         })}
-        </InfiniteScroll>
-
-       
       </main>
     </div>
   );
@@ -86,22 +57,23 @@ export async function getStaticProps(context) {
 
   // });
 
-  let allBlogs = [];
+  let allBlogs=[];
   let myFile;
   let data = await fs.promises.readdir("blogdata");
-  let allCount = data.length
   console.log(data);
-  for (let index = 0; index < 2; index++) {
+  for (let index = 0; index < data.length; index++) {
     const item = data[index];
-    myFile = await fs.promises.readFile("blogdata/" + item, "utf-8");
-    allBlogs.push(JSON.parse(myFile));
+   
+    myFile = await fs.promises.readFile(("blogdata/"+item),"utf-8");
+  
+    
+    allBlogs.push(JSON.parse(myFile))
     // myFile = await fs.promises.readFile(("blogdata/" + element),"utf-8"),
     // // allBlogs.push(JSON.parse(myFile));
   }
 
   return {
-    // props: { blogs:allBlogs,allCount:allCount }, // will be passed to the page component as props
-    props: { allBlogs,allCount }, // will be passed to the page component as props
+    props: { blogs: allBlogs }, // will be passed to the page component as props
   };
 }
 

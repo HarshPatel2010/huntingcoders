@@ -10,6 +10,18 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+
+ 
+}
+.allBlogs_display{
+  display: flex;
+  justify-content: center;
+
+  /* align-items: center; */
+  /* align-content: center;
+  align-self: center; */
+  flex-wrap: wrap;
+  margin: 0px 100px;
 }
 
 .footer {
@@ -67,10 +79,10 @@
 
 .grid {
   display: flex;
-  align-items: center;
+  /* align-items: center; */
   justify-content: center;
   flex-wrap: wrap;
-  max-width: 800px;
+  /* max-width: 800px; */
 }
 
 .card {
@@ -113,5 +125,8 @@
   .grid {
     width: 100%;
     flex-direction: column;
+  }
+  .allBlogs_display{
+   margin: 0;
   }
 }

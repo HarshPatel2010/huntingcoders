@@ -17,3 +17,9 @@
 .navItems {
     display: flex;
 }
+
+@media only screen and (max-width: 600px) {
+  .navItems li{
+    margin: 0;
+  }
+  }

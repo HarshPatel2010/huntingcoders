@@ -18,16 +18,14 @@ const blog = (props) => {
   //     setblogs(parsed)
   //   })
   // },[])
-  const [ blogs,setblogs ] = useState(props.allBlogs);
-  const [ count,setcount ] = useState(2);
+  const { blogs,setblogs } = useState(props);
   const fetchData = async() => {
     // a fake async api call like which sends
     // 20 more records in 1.5 secs
 
-let d = await fetch(`http://localhost:3000/api/blogs/?count=${count+2}`)
-let data = await d.json()
+let d = await fetch(`http://localhost:3000/api/blogs/?count=2`)
+data = await d.json()
     setblogs(data);
-    setcount(count + 2)
   };
 
   return (
@@ -36,14 +34,13 @@ let data = await d.json()
       <InfiniteScroll
           dataLength={blogs.length} //This is important field to render the next data
           next={fetchData}
-          hasMore={props.allCount !== blogs.length}
+          hasMore={true}
           loader={<h4>Loading...</h4>}
           endMessage={
             <p style={{ textAlign: "center" }}>
               <b>Yay! You have seen it all</b>
             </p>
           }
-          className={styles.grid}
         >
            {blogs.map((blogItem) => {
           return (
@@ -89,9 +86,8 @@ export async function getStaticProps(context) {
   let allBlogs = [];
   let myFile;
   let data = await fs.promises.readdir("blogdata");
-  let allCount = data.length
   console.log(data);
-  for (let index = 0; index < 2; index++) {
+  for (let index = 0; index < data.length; index++) {
     const item = data[index];
     myFile = await fs.promises.readFile("blogdata/" + item, "utf-8");
     allBlogs.push(JSON.parse(myFile));
@@ -100,8 +96,7 @@ export async function getStaticProps(context) {
   }
 
   return {
-    // props: { blogs:allBlogs,allCount:allCount }, // will be passed to the page component as props
-    props: { allBlogs,allCount }, // will be passed to the page component as props
+    props: { blogs:allBlogs }, // will be passed to the page component as props
   };
 }
 
